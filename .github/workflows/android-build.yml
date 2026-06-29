@@ -48,18 +48,18 @@ jobs:
           # Detect your uploaded rnj-logo.jpg file
           SOURCE_ICON="rnj-logo.jpg"
           
-          # Automatically resize and replace standard Android launcher icons with the RNJ logo
+          # Automatically resize and replace standard Android launcher icons with the RNJ logo using IM6 convert
           RES_DIR="android/app/src/main/res"
-          magick "$SOURCE_ICON" -resize 48x48     $RES_DIR/mipmap-mdpi/ic_launcher.png
-          magick "$SOURCE_ICON" -resize 48x48     $RES_DIR/mipmap-mdpi/ic_launcher_round.png
-          magick "$SOURCE_ICON" -resize 72x72     $RES_DIR/mipmap-hdpi/ic_launcher.png
-          magick "$SOURCE_ICON" -resize 72x72     $RES_DIR/mipmap-hdpi/ic_launcher_round.png
-          magick "$SOURCE_ICON" -resize 96x96     $RES_DIR/mipmap-xhdpi/ic_launcher.png
-          magick "$SOURCE_ICON" -resize 96x96     $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
-          magick "$SOURCE_ICON" -resize 144x144   $RES_DIR/mipmap-xxhdpi/ic_launcher.png
-          magick "$SOURCE_ICON" -resize 144x144   $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
-          magick "$SOURCE_ICON" -resize 192x192   $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
-          magick "$SOURCE_ICON" -resize 192x192   $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
+          convert "$SOURCE_ICON" -resize 48x48     $RES_DIR/mipmap-mdpi/ic_launcher.png
+          convert "$SOURCE_ICON" -resize 48x48     $RES_DIR/mipmap-mdpi/ic_launcher_round.png
+          convert "$SOURCE_ICON" -resize 72x72     $RES_DIR/mipmap-hdpi/ic_launcher.png
+          convert "$SOURCE_ICON" -resize 72x72     $RES_DIR/mipmap-hdpi/ic_launcher_round.png
+          convert "$SOURCE_ICON" -resize 96x96     $RES_DIR/mipmap-xhdpi/ic_launcher.png
+          convert "$SOURCE_ICON" -resize 96x96     $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
+          convert "$SOURCE_ICON" -resize 144x144   $RES_DIR/mipmap-xxhdpi/ic_launcher.png
+          convert "$SOURCE_ICON" -resize 144x144   $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
+          convert "$SOURCE_ICON" -resize 192x192   $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
+          convert "$SOURCE_ICON" -resize 192x192   $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
 
       - name: 9. Sync Web Files to Android Structure
         run: npx cap sync android
