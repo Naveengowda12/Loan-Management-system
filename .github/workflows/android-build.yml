@@ -1,0 +1,68 @@
+name: Build Android APK
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Source Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Set up Java Environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: 3. Set up Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: 4. Build Environment and Pull HTML Code
+        run: |
+          echo '{"name": "rnjmanager", "version": "1.0.0", "private": true, "dependencies": {"@capacitor/android": "^6.0.0","@capacitor/cli": "^6.0.0","@capacitor/core": "^6.0.0"}}' > package.json
+          mkdir -p www
+          curl -sL "https://naveengowda12.github.io/Loan-Management-system/index.html" -o www/index.html
+
+      - name: 5. Standard Dependency Extraction
+        run: npm install
+
+      - name: 6. Hardcode Capacitor Config File Directly
+        run: |
+          cat <<EOF > capacitor.config.json
+          {
+            "appId": "com.rnj.loanmanager",
+            "appName": "RNJ Loan System",
+            "webDir": "www"
+          }
+          EOF
+
+      - name: 7. Inject Android Native Project Shell
+        run: npx cap add android
+
+      - name: 8. Download and Auto-Configure Custom Launcher Icon
+        run: |
+          npm install -g cordova-res
+          mkdir -p resources
+          
+          # Fetch your raw RNJ logo image directly into the workspace icon profiles
+          curl -sL "https://images.prodia.xyz/rnj-logo.jpg" || curl -sL "https://github.com/naveengowda12/Loan-Management-system/raw/main/rnj-logo.jpg" -o resources/icon.png
+          cp resources/icon.png resources/splash.png
+          
+          # Generate custom system-scaled brand icons dynamically
+          cordova-res android --skip-splash --copy
+
+      - name: 9. Sync Web Files to Android Structure
+        run: npx cap sync android
+
+      - name: 10. Compile App File Package (APK)
+        run: |
+          cd android
+          ./gradlew assembleDebug
+
+      - name: 11. Deliver Mobile App Download Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: RNJ-LoanManager-Installer
+          path: android/app/build/outputs/apk/debug/app-debug.apk
