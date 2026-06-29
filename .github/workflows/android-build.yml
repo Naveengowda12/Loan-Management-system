@@ -23,7 +23,7 @@ jobs:
         run: |
           echo '{"name": "rnjmanager", "version": "1.0.0", "private": true, "dependencies": {"@capacitor/android": "^6.0.0","@capacitor/cli": "^6.0.0","@capacitor/core": "^6.0.0"}}' > package.json
           mkdir -p www
-          curl -sL "https://naveengowda12.github.io/Loan-Management-system/index.html" -o www/index.html
+          cp index.html www/
 
       - name: 5. Standard Dependency Extraction
         run: npm install
@@ -41,26 +41,25 @@ jobs:
       - name: 7. Inject Android Native Project Shell
         run: npx cap add android
 
-      - name: 8. Create Custom Launcher Icons using ImageMagick
+      - name: 8. Install ImageMagick and Auto-Generate Launcher Icons
         run: |
-          # Fallback: If logo.jpg isn't uploaded yet, create a temporary white background so the build won't crash
-          if [ ! -f logo.jpg ]; then
-            echo "logo.jpg not found in root repository. Creating placeholder icon..."
-            convert -size 512x512 xc:white logo.jpg
-          fi
+          sudo apt-get update && sudo apt-get install -y imagemagick
           
-          # Automatically resize and replace the standard Android launcher icons
+          # Detect your uploaded rnj-logo.jpg file
+          SOURCE_ICON="rnj-logo.jpg"
+          
+          # Automatically resize and replace standard Android launcher icons with the RNJ logo
           RES_DIR="android/app/src/main/res"
-          convert logo.jpg -resize 48x48     $RES_DIR/mipmap-mdpi/ic_launcher.png
-          convert logo.jpg -resize 48x48     $RES_DIR/mipmap-mdpi/ic_launcher_round.png
-          convert logo.jpg -resize 72x72     $RES_DIR/mipmap-hdpi/ic_launcher.png
-          convert logo.jpg -resize 72x72     $RES_DIR/mipmap-hdpi/ic_launcher_round.png
-          convert logo.jpg -resize 96x96     $RES_DIR/mipmap-xhdpi/ic_launcher.png
-          convert logo.jpg -resize 96x96     $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
-          convert logo.jpg -resize 144x144   $RES_DIR/mipmap-xxhdpi/ic_launcher.png
-          convert logo.jpg -resize 144x144   $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
-          convert logo.jpg -resize 192x192   $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
-          convert logo.jpg -resize 192x192   $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
+          magick "$SOURCE_ICON" -resize 48x48     $RES_DIR/mipmap-mdpi/ic_launcher.png
+          magick "$SOURCE_ICON" -resize 48x48     $RES_DIR/mipmap-mdpi/ic_launcher_round.png
+          magick "$SOURCE_ICON" -resize 72x72     $RES_DIR/mipmap-hdpi/ic_launcher.png
+          magick "$SOURCE_ICON" -resize 72x72     $RES_DIR/mipmap-hdpi/ic_launcher_round.png
+          magick "$SOURCE_ICON" -resize 96x96     $RES_DIR/mipmap-xhdpi/ic_launcher.png
+          magick "$SOURCE_ICON" -resize 96x96     $RES_DIR/mipmap-xhdpi/ic_launcher_round.png
+          magick "$SOURCE_ICON" -resize 144x144   $RES_DIR/mipmap-xxhdpi/ic_launcher.png
+          magick "$SOURCE_ICON" -resize 144x144   $RES_DIR/mipmap-xxhdpi/ic_launcher_round.png
+          magick "$SOURCE_ICON" -resize 192x192   $RES_DIR/mipmap-xxxhdpi/ic_launcher.png
+          magick "$SOURCE_ICON" -resize 192x192   $RES_DIR/mipmap-xxxhdpi/ic_launcher_round.png
 
       - name: 9. Sync Web Files to Android Structure
         run: npx cap sync android
